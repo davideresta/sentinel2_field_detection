@@ -13,6 +13,8 @@ from mmengine.visualization import Visualizer
 from mmdet.datasets.samplers import TrackImgSampler
 from mmdet.registry import HOOKS
 from mmdet.structures import DetDataSample, TrackDataSample
+import netCDF4 as nc
+import numpy as np
 
 
 @HOOKS.register_module()
@@ -128,9 +130,28 @@ class DetVisualizationHook(Hook):
         for data_sample in outputs:
             self._test_index += 1
 
+            ### load a standard RGB image for visualization
+            #img_path = data_sample.img_path
+            #img_bytes = get(img_path, backend_args=self.backend_args)
+            #img = mmcv.imfrombytes(img_bytes, channel_order='rgb')
+
+            ### load an AI4Boundaries image for visualization, with the RGB bands at t=0 only
             img_path = data_sample.img_path
-            img_bytes = get(img_path, backend_args=self.backend_args)
-            img = mmcv.imfrombytes(img_bytes, channel_order='rgb')
+            nc_data = nc.Dataset(img_path)
+            img = []
+            spectral_bands = ['B4', 'B3', 'B2']
+            for spectral_band in spectral_bands:
+                band_img = np.expand_dims(np.array(nc_data[spectral_band][0,:,:], dtype="float32"), axis=-1)
+                band_img = np.where(band_img==-9999, 0, band_img)
+                assert np.min(band_img) >= 0
+                band_img = np.nan_to_num(band_img)
+                assert not np.any(np.isnan(band_img))
+                band_img_min = np.min(band_img)
+                band_img_max = np.max(band_img)
+                band_img = (band_img-band_img_min)*(255/(band_img_max-band_img_min))
+                img.append(band_img)
+            img = np.array(np.concatenate(img, axis=-1), dtype="uint8")
+
 
             out_file = None
             if self.test_out_dir is not None:

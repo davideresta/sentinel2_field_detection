@@ -16,6 +16,113 @@ from mmdet.structures.bbox import get_box_type
 from mmdet.structures.bbox.box_type import autocast_box_type
 from mmdet.structures.mask import BitmapMasks, PolygonMasks
 
+import netCDF4 as nc
+
+
+@TRANSFORMS.register_module()
+class LoadS2ImageFromNcFile(BaseTransform):
+    """Load a Sentinel-2 multi-channel image from an AI4Boundaries .nc file.
+    Normalization is also included.
+
+    Required Keys:
+
+    - img_path
+
+    Modified Keys:
+
+    - img
+    - img_shape
+    - ori_shape
+
+    Args:
+        file_client_args (dict): Arguments to instantiate the
+            corresponding backend in mmdet <= 3.0.0rc6. Defaults to None.
+        backend_args (dict, optional): Arguments to instantiate the
+            corresponding backend in mmdet >= 3.0.0rc7. Defaults to None.
+    """
+
+    def __init__(
+        self,
+        file_client_args: dict = None,
+        backend_args: dict = None,
+    ) -> None:
+        self.backend_args = backend_args
+        if file_client_args is not None:
+            raise RuntimeError(
+                'The `file_client_args` is deprecated, '
+                'please use `backend_args` instead, please refer to'
+                'https://github.com/open-mmlab/mmdetection/blob/main/configs/_base_/datasets/coco_detection.py'  # noqa: E501
+            )
+
+    def load_nc_img(self, img_path):
+
+        # read .nc file
+        nc_data = nc.Dataset(img_path)
+
+        spectral_bands = ['B2', 'B3', 'B4', 'B8', 'NDVI']
+        temporal_moments = range(6)
+
+        img = []
+        for spectral_band in spectral_bands:
+            for temporal_moment in temporal_moments:
+                band_temp_img = np.expand_dims(np.array(nc_data[spectral_band][temporal_moment,:,:], dtype="float32"), axis=-1)
+
+                if spectral_band != 'NDVI':
+                    band_temp_img = np.where(band_temp_img==-9999, 0, band_temp_img)
+                    assert np.min(band_temp_img) >= 0
+        
+                band_temp_img = np.nan_to_num(band_temp_img)
+                assert not np.any(np.isnan(band_temp_img))
+
+                # linear normalization
+                # a and b are approximately the min and max
+                # of the resulting range
+                a = 0
+                b = 1
+                if spectral_band=='NDVI':
+                    # c and d are the min and max
+                    # of the NDVI band in the training dataset
+                    # (except for some outliers)
+                    c = -1
+                    d = 1
+                else:
+                    # c and d are the 1st and 99th percentile
+                    # of the training dataset, for non-NDVI bands
+                    c = 136
+                    d = 5079
+                band_temp_img = (band_temp_img-c)*((b-a)/(d-c)) + a
+
+                img.append(band_temp_img)
+                
+        img = np.concatenate(img, axis=-1)
+        assert img.shape == (256, 256, 30)
+        return img
+
+    def transform(self, results: dict) -> dict:
+        """Transform functions to load multiple images and get images meta
+        information.
+
+        Args:
+            results (dict): Result dict from :obj:`mmdet.CustomDataset`.
+
+        Returns:
+            dict: The dict contains loaded images and meta information.
+        """
+        
+        img = self.load_nc_img(results['img_path'])
+
+        results['img'] = img
+        results['img_shape'] = img.shape[:2]
+        results['ori_shape'] = img.shape[:2]
+        return results
+
+    def __repr__(self):
+        repr_str = (f'{self.__class__.__name__}('
+                    f'backend_args={self.backend_args})')
+        return repr_str
+
+
+
 
 @TRANSFORMS.register_module()
 class LoadImageFromNDArray(LoadImageFromFile):

@@ -31,6 +31,7 @@ from .kd_one_stage import KnowledgeDistillationSingleStageDetector
 from .lad import LAD
 from .mask2former import Mask2Former
 from .mask_rcnn import MaskRCNN
+from .mask_rcnn_30channels import MaskRCNN_30channels
 from .mask_scoring_rcnn import MaskScoringRCNN
 from .maskformer import MaskFormer
 from .nasfcos import NASFCOS
@@ -53,6 +54,7 @@ from .sparse_rcnn import SparseRCNN
 from .tood import TOOD
 from .trident_faster_rcnn import TridentFasterRCNN
 from .two_stage import TwoStageDetector
+from .two_stage_30channels import TwoStageDetector_30channels
 from .vfnet import VFNet
 from .yolact import YOLACT
 from .yolo import YOLOV3
@@ -60,9 +62,9 @@ from .yolof import YOLOF
 from .yolox import YOLOX
 
 __all__ = [
-    'ATSS', 'BaseDetector', 'SingleStageDetector', 'TwoStageDetector', 'RPN',
+    'ATSS', 'BaseDetector', 'SingleStageDetector', 'TwoStageDetector', 'TwoStageDetector_30channels', 'RPN',
     'KnowledgeDistillationSingleStageDetector', 'FastRCNN', 'FasterRCNN',
-    'MaskRCNN', 'CascadeRCNN', 'HybridTaskCascade', 'RetinaNet', 'FCOS',
+    'MaskRCNN', 'MaskRCNN_30channels', 'CascadeRCNN', 'HybridTaskCascade', 'RetinaNet', 'FCOS',
     'GridRCNN', 'MaskScoringRCNN', 'RepPointsDetector', 'FOVEA', 'FSAF',
     'NASFCOS', 'PointRend', 'GFL', 'CornerNet', 'PAA', 'YOLOV3', 'YOLACT',
     'VFNet', 'DETR', 'TridentFasterRCNN', 'SparseRCNN', 'SCNet', 'SOLO',

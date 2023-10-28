@@ -10,7 +10,7 @@ from .geometric import (GeomTransform, Rotate, ShearX, ShearY, TranslateX,
                         TranslateY)
 from .instaboost import InstaBoost
 from .loading import (FilterAnnotations, InferencerLoader, LoadAnnotations,
-                      LoadEmptyAnnotations, LoadImageFromNDArray,
+                      LoadEmptyAnnotations, LoadS2ImageFromNcFile, LoadImageFromNDArray,
                       LoadMultiChannelImageFromFiles, LoadPanopticAnnotations,
                       LoadProposals, LoadTrackAnnotations)
 from .transformers_glip import GTBoxSubOne_GLIP, RandomFlip_GLIP
@@ -24,7 +24,7 @@ from .transforms import (Albu, CachedMixUp, CachedMosaic, CopyPaste, CutOut,
 from .wrappers import MultiBranch, ProposalBroadcaster, RandomOrder
 
 __all__ = [
-    'PackDetInputs', 'ToTensor', 'ImageToTensor', 'Transpose',
+    'PackDetInputs', 'ToTensor', 'ImageToTensor', 'Transpose', 'LoadS2ImageFromNcFile',
     'LoadImageFromNDArray', 'LoadAnnotations', 'LoadPanopticAnnotations',
     'LoadMultiChannelImageFromFiles', 'LoadProposals', 'Resize', 'RandomFlip',
     'RandomCrop', 'SegRescale', 'MinIoURandomCrop', 'Expand',

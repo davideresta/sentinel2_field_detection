@@ -6,6 +6,7 @@ from .base_semseg_dataset import BaseSegDataset
 from .base_video_dataset import BaseVideoDataset
 from .cityscapes import CityscapesDataset
 from .coco import CocoDataset
+from .sentinel2 import Sentinel2Dataset
 from .coco_caption import CocoCaptionDataset
 from .coco_panoptic import CocoPanopticDataset
 from .coco_semantic import CocoSegDataset
@@ -31,7 +32,7 @@ from .xml_style import XMLDataset
 from .youtube_vis_dataset import YouTubeVISDataset
 
 __all__ = [
-    'XMLDataset', 'CocoDataset', 'DeepFashionDataset', 'VOCDataset',
+    'XMLDataset', 'CocoDataset', 'Sentinel2Dataset', 'DeepFashionDataset', 'VOCDataset',
     'CityscapesDataset', 'LVISDataset', 'LVISV05Dataset', 'LVISV1Dataset',
     'WIDERFaceDataset', 'get_loading_pipeline', 'CocoPanopticDataset',
     'MultiImageMixDataset', 'OpenImagesDataset', 'OpenImagesChallengeDataset',
