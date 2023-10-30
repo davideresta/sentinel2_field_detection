@@ -7,3 +7,5 @@ six
 terminaltables
 tqdm
 netCDF4
+scikit-image
+rasterio
