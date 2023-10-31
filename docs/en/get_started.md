@@ -99,7 +99,7 @@ the number of channels from 30 to 3 instead of directly adopting a (not pre-trai
 To evaluate a previously trained field detection model, use the command:
 
 ```shell
-python tools\test.py work_dirs\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2.py work_dirs\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2\epoch_15 --show
+python tools\test.py work_dirs\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2.py work_dirs\mask-rcnn_swin-t-p4-w7_fpn_1x_sentinel2\epoch_15.pth --show
 ```
 
 The first two arguments are, respectively, the path to the configuration file of the model and the path to the checkpoint file, containing the values of the trained parameters. The --show option can be used to visualize the predictions of the model on the considered test images.
